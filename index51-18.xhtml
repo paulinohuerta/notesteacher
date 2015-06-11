@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+        xmlns:p="http://primefaces.org/ui"  
+	template="/templates/template.xhtml">
+	<ui:define name="content">
+          <h:head>
+           <title>General</title>
+          </h:head>
+
+           <h4>Usuarios conectados</h4> 
+           <h:form id="utxt_count">
+            <ui:repeat value="#{loginManager.users}" var="item">
+              <div>
+                <h:outputText value="#{item}" escape="false"/>
+                <hr />
+              </div>
+             </ui:repeat>
+           </h:form>
+           <h:form id="utxt1_count">
+             <p:poll interval="360"  update=":utxt_count" />
+           </h:form>
+
+           <h3>Usuario: #{tabbedView.user.username}</h3>
+           <p:commandLink id="logout" 
+               actionListener="#{tabbedView.user.logout}"
+               style="margin-right:20px;"
+               oncomplete="logout(xhr, status, args)">
+               <h:outputText value="logout" />
+           </p:commandLink>
+	   <h:form id="form1">
+            <p:growl id="messages" showDetail="true" life="6000"/>
+            <p:panelGrid columns="2">
+             <h3>Seleccionando Evaluación</h3>
+             <p:selectOneMenu id="evalField" value="#{tabbedView.eval}" style="width:160px" >
+              <p:ajax event="change" update=":formB,:form,:form0,:formBB" listener="#{tabbedView.grupoChanged}" /> 
+               <f:selectItem itemLabel="" itemValue="" />
+               <f:selectItems value="#{tabbedView.generalEval}" var="i">
+                 <f:selectItem itemLabel="#{i}" itemValue="#{i}" />
+               </f:selectItems>
+            </p:selectOneMenu>
+           </p:panelGrid>
+	   </h:form>
+	   <h:form id="formB">
+          <p:panelGrid columns="2">
+            <h3>Seleccionando Grupo</h3>
+            <p:selectOneMenu id="grupoField"  value="#{tabbedView.option}" style="width:130px">
+              <p:ajax event="change" update=":form0,:form,:formBB" listener="#{tabbedView.grupoChanged1}" /> 
+               <f:selectItem itemLabel="" itemValue="" /> 
+               <f:selectItems value="#{tabbedView.user.gruposBlanco}" var="i">
+                 <f:selectItem itemLabel="#{i}" itemValue="#{i}" />
+               </f:selectItems>
+            </p:selectOneMenu>
+           </p:panelGrid>
+	   </h:form>
+           <h:form id="formBB">
+            <p:growl id="messages01" showDetail="true" life="6000"/>
+           <p:fieldset legend="Agenda" collapsed="true" toggleable="true" toggleSpeed="500">
+            <p:ajax event="toggle" listener="#{tabbedView.handleToggle}" update="messages01"/>
+           <h:panelGrid columnClasses="value">
+            <h3>Agenda de #{tabbedView.grupoValidoAgenda}</h3>
+        <p:schedule id="schedule" value="#{tabbedView.agenda.eventModel}" styleClass="myclass" locale="es" widgetVar="myschedule" timeZone="GMT+2" view="basicWeek" tooltip="true" allDaySlot="false" showWeekends="false"
+         columnFormat="week : 'dd/MM'"
+         leftHeaderTemplate="today"
+rightHeaderTemplate="prev,next"
+centerTemplate="month, agendaWeek, agendaDay"  >
+           <p:ajax event="dateSelect" listener="#{tabbedView.agenda.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />    
+            <p:ajax event="eventSelect" listener="#{tabbedView.agenda.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+            <p:ajax event="eventMove" listener="#{tabbedView.onEventMove}" update="messages01" /> 
+            <p:ajax event="eventResize" listener="#{tabbedView.agenda.onEventResize}" update="messages01" />
+
+         </p:schedule>
+        </h:panelGrid>
+        <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+        <h:panelGrid id="eventDetails" columns="2">
+            <h:outputLabel for="title" value="Title:" />
+            <p:inputText id="title" value="#{tabbedView.agenda.event.title}"
+                                           required="true" />
+            <h:outputLabel for="from" value="From:" />
+            <p:inputMask id="from" value="#{tabbedView.agenda.event.startDate}"
+                                       mask="99/99/9999">
+                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT+2"/>
+            </p:inputMask>
+
+ <p:commandButton id="addButton" value="Agregar" actionListener="#{tabbedView.agenda.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" action="#{tabbedView.actionAgenda}" />
+            <p:commandButton id="deleteButton" value="Eliminar" actionListener="#{tabbedView.agenda.deleteEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" action="#{tabbedView.actionAgenda}" />
+        </h:panelGrid>
+    </p:dialog>
+           </p:fieldset>
+	  </h:form> 
+            <hr />
+	   <h:form id="formAdmin" rendered="#{tabbedView.admin}">
+              <p:growl id="messages" showDetail="true"/>
+               <p:toolbar>
+                <f:facet name="left">
+                 <p:commandButton type="button" value="New" icon="ui-icon-document" />
+ 
+                 <p:commandButton type="button" value="Open" icon="ui-icon-folder-open" />
+ 
+                 <span class="ui-separator">
+                   <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                 </span>
+ 
+                 <p:commandButton type="button" title="Save" icon="ui-icon-disk" />
+                 <p:commandButton type="button" title="Delete" icon="ui-icon-trash" />
+                 <p:commandButton type="button" title="Print" icon="ui-icon-print" />
+                </f:facet>
+ 
+                <f:facet name="right">
+                <p:menuButton value="Options">
+                 <p:menuitem value="Cuaderno de un Profesor" actionListener="#{tabbedView.cuadernoadmin}" icon="ui-icon-disk" ajax="false" update=":formAdminB,:form"/>
+                 <p:menuitem value="Cargar alumnos en grupos" actionListener="#{tabbedView.cargagrupoadmin}" icon="ui-icon-arrowrefresh-1-w" ajax="false" update=":formAdminB,:form" />
+                 <p:menuitem value="Consulta/altas" actionListener="#{tabbedView.consultaG}" ajax="false" icon="ui-icon-close" update=":formAdminB,:form"/>
+                 <p:menuitem value="Preguntas/Respuestas" icon="ui-icon-extlink" actionListener="#{tabbedView.faq}" ajax="false" update=":formAdminB,:form"/>
+                 <p:separator />
+                 <p:menuitem value="Mi cuaderno"  ajax="false" actionListener="#{tabbedView.cuadernomio}" update=":formAdminB,:form,:form:acc" icon="ui-icon-disk"/>
+            </p:menuButton>
+        </f:facet>
+ 
+    </p:toolbar>
+	   </h:form> 
+	   <h:form id="formAdminB" rendered="#{tabbedView.cuadernoadmin}">
+              <p:growl id="msgsA" showDetail="true" escape="false"/>
+ 
+              <h3 style="margin-top:0">Profesores</h3>
+               <p:tree value="#{tabbedView.root}" var="nodo"
+                 selectionMode="single"
+                 selection="#{tabbedView.selectedNode}">
+                <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                 <h:outputText value="#{nodo.name}"/>
+                </p:treeNode>
+                <p:treeNode type="document" icon="ui-icon-document">
+                 <h:outputText value="#{nodo.name}" />
+                </p:treeNode>
+               </p:tree>
+               <p:commandButton value="Display" update=":form,:formAdminC,:formAdminC0" icon="ui-icon-newwin" actionListener="#{tabbedView.displaySelectedSingle1}"/>
+           </h:form>
+           <h:form id="formAdminBC" enctype="multipart/form-data" rendered="#{tabbedView.cargagrupoadmin}">
+             <p:growl id="messages" showDetail="true" escape="false"/>
+ 
+             <p:fileUpload value="#{tabbedView.file}" mode="simple" skinSimple="true"/>
+ 
+             <p:commandButton value="Cargar Datos" ajax="false" actionListener="#{tabbedView.upload1}" disabled="false"  update=":fpickList"/>
+
+          </h:form>
+          <h:form id="fsugerencia" rendered="#{tabbedView.faq}">
+           <p:growl id="msgsS" showDetail="true" escape="false"/>
+           <p:dataTable id="lasFaq" var="item"  value="#{tabbedView.listSugerencia}"  style="margin-bottom:7px" rows="10" 
+       paginator="true" 
+       paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+       rowsPerPageTemplate="5,10,15"
+       selectionMode="single" selection="#{item}" rowKey="#{item.clave}">
+            <f:facet name="header">
+                 Preguntas / Sugerencias
+            </f:facet>
+          <p:ajax event="rowSelect" listener="#{tabbedView.sugerenciaOnRowSelect}" update=":fsugerencia:msgsS,:fsugerencia:laClave,:fsugerencia:laFecha,:fsugerencia:elTexto,:fsugerencia:txt_texto0" />
+          <p:ajax event="rowUnselect" listener="#{tabbedView.sugerenciaOnRowUnselect}" update=":fsugerencia:msgsS,:fsugerencia"/> 
+
+            <p:column headerText="Clave">
+               <h:outputText value="#{item.clave}"/>
+            </p:column>
+
+            <p:column headerText="Fecha" sortBy="#{item.fecha}">
+               <h:outputText value="#{item.fechad}"/>
+            </p:column>
+
+            <p:column headerText="Tipo" sortBy="#{item.tipo}">
+               <h:outputText value="#{item.tipo}" />
+            </p:column>
+
+            <p:column headerText="Autor" >
+               <h:outputText value="#{item.author}" />
+            </p:column>
+
+            <p:column headerText="Texto" >
+               <h:outputText value="#{item.descri}" />
+            </p:column>
+          </p:dataTable>
+           <h3>Respondiendo</h3>
+         <h:panelGrid  columns="2" cellpadding="5"> 
+           <p:outputLabel value="Clave :" for="laClave" />
+           <h:outputText id="laClave" value="#{tabbedView.sugerencia.clave}"/>
+           <p:outputLabel value="Fecha :" for="laFecha" />
+           <h:outputText id="laFecha" value="#{tabbedView.sugerencia.fechad}"/>
+           <p:outputLabel value="Texto :" for="elTexto" />
+           <h:outputText id="elTexto" value="#{tabbedView.sugerencia.descri}"/>
+           <p:outputLabel value="Tu respuesta : *" for="txt_texto0" />
+           <p:inputTextarea id="txt_texto0" rows="6" cols="50" value="#{tabbedView.nuevoTexto}" required="true"/> 
+          <p:commandButton value="Submit" id="submitE" update=":fsugerencia,:fsugerencia:lasFaq"  actionListener="#{tabbedView.respuestaFaq}" styleClass="ui-priority-primary" action="#{tabbedView.actionRespFaq}"/>  
+         </h:panelGrid> 
+          </h:form>
+          <h:form id="fpickList" rendered="#{tabbedView.cargapickadmin}">
+           <h:panelGrid columns="3" cellpadding="5">
+            <p:outputLabel value="Nombre grupo: *" for="txt_grupoescogido" />
+            <p:inputText id="txt_grupoescogido" value="#{tabbedView.grupoEscogido}" />
+
+        <p:dataList  id="listDeGrupos" value="#{tabbedView.listgrup}" var="item" type="ordered" itemType="none"
+        paginator="true" rows="5" styleClass="paginated">
+        <f:facet name="header">
+            Grupos actuales
+        </f:facet>
+        <p:commandLink update=":fpickList:grDetail" oncomplete="PF('grDialog').show()" title="Ver Alumnos"
+             actionListener="#{tabbedView.seleccionadoAction}">
+
+        <!--   styleClass="ui-icon ui-icon-search" style="float:left;margin-right:10px" -->
+            <f:setPropertyActionListener value="#{item.clave}" target="#{tabbedView.selectedGr}" />
+            <h:outputText value="#{item.clave}" />
+        </p:commandLink>
+        <h:outputText value="#{item.clave}" style="display:inline-block"/>
+       </p:dataList>
+ 
+      <p:dialog header="Grupo Info" widgetVar="grDialog" modal="true" showEffect="blind" hideEffect="explode"
+      resizable="false">
+        <p:outputPanel id="grDetail" style="text-align:center;">
+          <p:dataTable id="deAlumnos" var="alumno" rendered="#{not empty tabbedView.selectedGr}"
+             value="#{tabbedView.grupoAlumno}" rows="10"
+	     paginator="true"
+             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+            <f:facet name="header">
+                 Grupo #{tabbedView.selectedGr}
+            </f:facet>
+
+            <p:column headerText="Apellidos y Nombres" sortBy="#{alumno}">
+                  <h:outputText value="#{alumno}" />
+            </p:column>
+          </p:dataTable>    
+        </p:outputPanel>
+       </p:dialog>
+      </h:panelGrid>
+           <p:pickList id="pickList" value="#{tabbedView.cargaAlum}" var="cargaAlum" itemLabel="#{cargaAlum}" itemValue="#{cargaAlum}" />
+ 
+           <p:commandButton id="GrupoSubmit" value="Submit" update="listDeGrupos,Cargados,displayGrupo" oncomplete="PF('grupoDialog').show()" style="margin-top:5px" action="#{tabbedView.actionAlumnosCargados}"/>
+           <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="grupoDialog">
+           <h:panelGrid id="displayGrupo" columns="2">
+             <h:outputText value="Source: " style="font-weight:bold" />
+             <ui:repeat value="#{tabbedView.cargaAlum.source}" var="item">
+               <h:outputText value="#{item}" style="margin-right:5px" />
+             </ui:repeat>
+ 
+             <h:outputText value="Target: " style="font-weight:bold" />
+             <ui:repeat value="#{tabbedView.cargaAlum.target}" var="item">
+                <h:outputText value="#{item}" style="margin-right:5px" />
+             </ui:repeat>
+           </h:panelGrid>
+           </p:dialog>
+           <p:dataTable id="Cargados" var="item"  value="#{tabbedView.cargaAlum.target}"  style="margin-bottom:7px" rows="10" 
+       paginator="true" 
+       paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+            <f:facet name="header">
+               Ahora hay
+            </f:facet>
+            <p:column headerText="Nombre Alumno" style="width:290px;">
+               <h:outputText value="#{item}" />
+            </p:column>
+          </p:dataTable>
+          </h:form>
+        <h:form id="formConsultaG" rendered="#{tabbedView.consultaG}">
+        <p:tabView id="tv1">
+         <p:tab id="aGrupo" title="Alta Grupo">
+          <h:panelGrid columns="2" cellpadding="10">
+           <p:dataList  id="listDeGrupos" value="#{tabbedView.listgrup}" var="item" type="unordered" itemType="none"
+        paginator="true" rows="5" styleClass="paginated">
+        <f:facet name="header">
+            Grupos actuales
+        </f:facet>
+        <p:commandLink update=":formConsultaG:tv1:grDetail" oncomplete="PF('grDialog').show()" title="Ver Alumnos"
+             actionListener="#{tabbedView.seleccionadoAction}">
+
+        <!--   styleClass="ui-icon ui-icon-search" style="float:left;margin-right:10px" -->
+            <f:setPropertyActionListener value="#{item.clave}" target="#{tabbedView.selectedGr}" />
+            <h:outputText value="#{item.clave}" />
+        </p:commandLink>
+       </p:dataList>
+ 
+      <p:dialog header="Grupo Info" widgetVar="grDialog" modal="true" showEffect="blind" hideEffect="explode"
+      resizable="false">
+        <p:outputPanel id="grDetail" style="text-align:center;width:260px;">
+          <p:dataTable id="deAlumnos" var="alumno" rendered="#{not empty tabbedView.selectedGr}"
+             value="#{tabbedView.grupoAlumno}" rows="10"
+	     paginator="true"
+             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" >
+            <f:facet name="header">
+                 Grupo #{tabbedView.selectedGr}
+            </f:facet>
+
+            <p:column headerText="Apellidos y Nombres" style="width:140px;"
+	         sortBy="#{alumno}">
+                  <h:outputText value="#{alumno}" />
+            </p:column>
+          </p:dataTable>    
+        </p:outputPanel>
+      </p:dialog>
+      <h:outputLabel for="nuevogrupo" value="Nuevo grupo:" />
+      <p:inplace id="nuevogrupo">
+        <p:inputText value="#{tabbedView.newgrupo}" />
+      </p:inplace>
+          </h:panelGrid>
+      <p:commandButton id="GrupoAlta" value="Submit" update=":formConsultaG:tv1" action="#{tabbedView.actionAltaGrupo}"/>
+         </p:tab>
+         <p:tab id="aProfesor" title="Alta Profesor">
+          <h:panelGrid columns="2" cellpadding="10">
+        <p:dataList  id="listDeProfes" value="#{tabbedView.listprofe}" var="item" type="unordered" itemType="none"
+        paginator="true" rows="5" styleClass="paginated">
+        <f:facet name="header">
+            Profesores actuales
+        </f:facet>
+        <p:commandLink update=":formConsultaG:tv1:prDetail" oncomplete="PF('prDialog').show()" title="Ver sus grupos"
+             actionListener="#{tabbedView.seleccionadoAction}">
+
+            <f:setPropertyActionListener value="#{item.clave}" target="#{tabbedView.selectedPr}" />
+            <h:outputText value="#{item.clave}" />
+        </p:commandLink>
+       </p:dataList>
+ 
+      <p:dialog header="Profe/Grupo Info" widgetVar="prDialog" modal="true" showEffect="blind" hideEffect="explode"
+      resizable="false">
+        <p:outputPanel id="prDetail" style="text-align:center;width:220px;" >
+          <p:dataTable id="deProfes" var="grupo" rendered="#{not empty tabbedView.selectedPr}"
+             value="#{tabbedView.profeGrupo}">
+            <f:facet name="header">
+                 Grupos de #{tabbedView.selectedPr}
+            </f:facet>
+
+            <p:column headerText="Nombre Grupo" >
+                  <h:outputText value="#{grupo}" />
+            </p:column>
+          </p:dataTable>    
+        </p:outputPanel>
+      </p:dialog>
+      <h:outputLabel for="nuevoprofe" value="Nuevo profesor:" />
+      <p:inplace id="nuevoprofe">
+        <p:inputText value="#{tabbedView.newprofe}" />
+      </p:inplace>
+      </h:panelGrid>
+      <p:commandButton id="ProfeAlta" value="Submit" update=":formConsultaG:tv1" action="#{tabbedView.actionAltaProfe}"/>
+     </p:tab>
+     <p:tab id="asignaGrupoProf" title="Asignar Grupos/Profe">
+        <p:selectOneMenu id="asignarField"  value="#{tabbedView.selectedPr1}" style="width:155px">
+           <p:ajax event="change" update="" listener="#{tabbedView.asignarChanged1}" />
+             <f:selectItems value="#{tabbedView.listP}" var="item">
+               <f:selectItem itemLabel="#{item}" itemValue="#{item}" />
+             </f:selectItems>
+        </p:selectOneMenu>
+
+        <p:pickList id="pickList" value="#{tabbedView.cargaGProfe}" var="cargaGProfe" itemLabel="#{cargaGProfe}" itemValue="#{cargaGProfe}" />
+        <p:commandButton id="ProfeSubmit" value="Submit" update="displayGrupo" oncomplete="PF('grupoDialog').show()" style="margin-top:5px" action="#{tabbedView.actionPG}"/>
+           <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="grupoDialog">
+           <h:panelGrid id="displayGrupo" columns="2">
+             <h:outputText value="Source: " style="font-weight:bold" />
+             <ui:repeat value="#{tabbedView.cargaGProfe.source}" var="item">
+               <h:outputText value="#{item}" style="margin-right:5px" />
+             </ui:repeat>
+
+             <h:outputText value="Target: " style="font-weight:bold" />
+             <ui:repeat value="#{tabbedView.cargaGProfe.target}" var="item">
+                <h:outputText value="#{item}" style="margin-right:5px" />
+             </ui:repeat>
+           </h:panelGrid>
+           </p:dialog>
+     </p:tab>
+     <p:tab id="asignaAlumAGrupo" title="Asignar Alumno a Grupo">
+       <h:panelGrid columns="2" cellpadding="10">
+	<h:outputLabel for="asignarField1" value="Los grupos:" />
+        <p:selectOneMenu id="asignarField1"  value="#{tabbedView.selectedGr}" style="width:155px">
+           <p:ajax event="change" update="" listener="#{tabbedView.asignarChanged1}" />
+              <f:selectItem itemLabel="" itemValue="" />
+             <f:selectItems value="#{tabbedView.listadegrupos}" var="item">
+               <f:selectItem itemLabel="#{item}" itemValue="#{item}" />
+             </f:selectItems>
+        </p:selectOneMenu>
+	<h:outputLabel for="nuevoalumno" value="Nuevo alumno:" />
+	<p:inplace id="nuevoalumno">
+	   <p:inputText value="#{tabbedView.newalumno}" />
+	</p:inplace>
+      </h:panelGrid>
+      <p:commandButton id="AlumnoAlta" value="Submit" update=":formConsultaG:tv1" action="#{tabbedView.actionAsignarAlumno}"/>
+
+     </p:tab>
+    </p:tabView>
+      </h:form>
+      <h:form id="form0" rendered="#{tabbedView.cuadernostandard}">
+            <p:growl id="msgs88" showDetail="true"  life="4000"/>
+           <p:panel header="Área Trabajos"  collapsed="true" toggleable="true" style="margin-bottom:20px">
+           <p:tabView id="tabV" >
+             <p:ajax event="tabChange" listener="#{tabbedView.onTabChange}" update=":form0:msgs88,:form0:tabV"/>
+            <p:ajax event="tabClose" listener="#{tabbedView.onTabClose}" update=":form0:msgs88"/>
+  <p:tab id="tab" title="Agregando">
+    <h:panelGrid columns="2" cellpadding="5">
+      <p:outputLabel value="Nombre : *" for="txt_title1" />
+      <p:inputText id="txt_title1" value="#{tabbedView.trabajo.title}" required="true"/>
+      <p:outputLabel value="Peso : *" for="txt_peso1" />
+      <p:selectOneMenu id="txt_peso1" value="#{tabbedView.trabajo.peso}" style="width:60px" required="true">
+        <f:selectItems value="#{tabbedView.percent}" var="percent" itemLabel="#{percent}" itemValue="#{percent}" />
+      </p:selectOneMenu>
+      <p:outputLabel value="Pertenece : *" for="txt_pertenece1"/>
+      <p:selectOneMenu id="txt_pertenece1" value="#{tabbedView.trabajo.descri}" style="width:140px" required="true">
+        <!-- <f:selectItem itemLabel="" itemValue="" /> -->
+        <f:selectItems value="#{tabbedView.idescri}" var="descri" itemLabel="#{descri}" itemValue="#{descri}" />
+      </p:selectOneMenu>
+      <p:outputLabel value="Evaluación : *" for="txt_evalua1"/>
+      <p:selectOneMenu id="txt_evalua1" value="#{tabbedView.trabajo.eval}" style="width:100px" required="true">
+        <!-- <f:selectItem itemLabel="" itemValue="" /> -->
+        <f:selectItems value="#{tabbedView.generalEval}" var="eval" itemLabel="#{eval}" itemValue="#{eval}" />
+      </p:selectOneMenu>
+      <p:commandButton id="btn_reset1" value="Reset" action="#{tabbedView.reset}" update=":form0:tabV:txt_peso1,:form0:tabV:txt_title1,:form0:tabV:txt_pertenece1,:form0:tabV:txt_evalua1"/>
+      <p:commandButton id="btn_add1" value="Add" update="trabajos1 @parent :form0:msgs88" action="#{tabbedView.reinit}" >
+         <p:collector value="#{tabbedView.trabajo}" addTo="#{tabbedView.trabajos}" unique="true"/> 
+      </p:commandButton>
+    </h:panelGrid>
+              <p:outputPanel id="trabajos1">
+              <p:dataTable value="#{tabbedView.trabajos}" var="trabajo" id="trabajosTable1">
+ 
+                <p:column headerText="Title">
+                  <h:outputText value="#{trabajo.title}" />
+                </p:column>
+ 
+                <p:column headerText="Peso">
+                  <h:outputText value="#{trabajo.peso}" />
+                </p:column>
+ 
+                <p:column headerText="Pertenece">
+                  <h:outputText value="#{trabajo.descri}" />
+                </p:column>
+                
+                <p:column headerText="Evaluación">
+                  <h:outputText value="#{trabajo.eval}" />
+                </p:column>
+ 
+                <p:column headerText="Action">
+                  <p:commandLink value="Remove" update=":form0:tabV:trabajos1" process=":form0:tabV:trabajos1">
+                    <p:collector value="#{trabajo}" removeFrom="#{tabbedView.trabajos}" unique="true"/>
+                  </p:commandLink>
+                </p:column>
+ 
+              </p:dataTable>
+            </p:outputPanel>
+            <p:commandButton value="Submit" id="submit1" update=":form,:form0"  actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.actionTrabajo}"/> 
+  </p:tab>
+  <p:tab title="Modificando">
+           <p:dataTable id="updtra" var="item"  value="#{tabbedView.tupdating}" editable="true"  style="margin-bottom:7px" >
+            <f:facet name="header">
+                 Editando Trabajos
+            </f:facet>
+ 
+            <p:ajax event="rowEdit" listener="#{tabbedView.onRowEdit1}" update=":form0:msgs88" />
+            <p:ajax event="rowEditCancel" listener="#{tabbedView.onRowCancel1}" update=":form0:msgs88" />
+ 
+            <p:column headerText="Código Item" style="width:110px;">
+                  <h:outputText value="#{item.descri}" />
+            </p:column>
+
+            <p:column headerText="Descripción" style="width:155px;">
+                  <h:outputText value="#{tabbedView.itemDescri(item.descri)}" />
+            </p:column>
+ 
+            <p:column headerText="Eval" style="width:45px;">
+                  <h:outputText value="#{item.eval}" />
+            </p:column>
+             
+            <p:column headerText="Nombre Trabajo">
+              <p:cellEditor>
+               <f:facet name="output"> 
+                  <h:outputText value="#{item.title}" />
+               </f:facet>
+               <f:facet name="input">
+                <p:inputText id="tp1Input" value="#{item.title}" style="width:100%"/>
+               </f:facet>
+              </p:cellEditor>
+             </p:column>
+             <p:column headerText="% Peso" style="width:45px;">
+              <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{item.peso}" /></f:facet>
+               <f:facet name="input">
+                 <h:selectOneMenu value="#{item.peso}" style="width:100%">
+                    <f:selectItems value="#{tabbedView.percent}" var="peso" itemLabel="#{peso}" itemValue="#{peso}" />
+                 </h:selectOneMenu>
+               </f:facet>
+              </p:cellEditor>
+             </p:column>
+             <p:column style="width:32px">
+               <p:rowEditor />
+             </p:column>
+           </p:dataTable>
+               <p:growl id="growl1" life="1000" />
+                <p:commandButton value="Submit" id="submit_up" update=":form" actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.actionTupdating1()}"/> 
+  </p:tab>
+  <p:tab title="Eliminando">
+              <p:outputPanel id="removeTra">
+              <p:dataTable value="#{tabbedView.tupdating}" var="trabajo" id="removeTable">
+ 
+                <p:column headerText="Title">
+                  <h:outputText value="#{trabajo.title}" />
+                </p:column>
+ 
+                <p:column headerText="Peso">
+                  <h:outputText value="#{trabajo.peso}" />
+                </p:column>
+ 
+                <p:column headerText="Pertenece">
+                  <h:outputText value="#{trabajo.descri}" />
+                </p:column>
+                
+                <p:column headerText="Evaluación">
+                  <h:outputText value="#{trabajo.eval}" />
+                </p:column>
+ 
+                <p:column headerText="Acción">
+                 <p:commandLink id="accionajax" value="Remove" update=":form0,:form" actionListener="#{tabbedView.eliminandoTrabajo}">
+                    <f:attribute name="valor" value="#{trabajo.clave}" />
+                 </p:commandLink>
+                </p:column>
+ 
+              </p:dataTable>
+            </p:outputPanel>
+            <p:commandButton value="Submit" id="eliminar1" update=":form,:form0"  actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.actionElimTrabajo}"/> 
+  </p:tab>
+  <p:tab title="Instrumentos items">
+           <p:dataTable id="upditem" var="item"  value="#{tabbedView.items}" editable="true"  style="margin-bottom:7px" >
+            <f:facet name="header">
+                 Editando Items
+            </f:facet>
+ 
+            <p:ajax event="rowEdit" listener="#{tabbedView.onRowEdit2}" update=":form0:msgs88" />
+            <p:ajax event="rowEditCancel" listener="#{tabbedView.onRowCancel2}" update=":form0:msgs88" />
+ 
+            <p:column headerText="Código" style="width:115px;">
+              <h:outputText value="#{item.codigo}" />
+            </p:column>
+ 
+            <p:column headerText="Orden" style="width:45px;">
+             <p:cellEditor>
+              <f:facet name="output"> 
+                 <h:outputText value="#{item.orden}" />
+              </f:facet>
+              <f:facet name="input">
+              <!-- <p:inputText id="tp0Input" value="#{item.orden}" style="width:100%"/>  -->
+               <h:selectOneMenu value="#{item.orden}" style="width:100%">
+                <f:selectItems value="#{tabbedView.generalOrden}" var="orden" itemLabel="#{orden}" itemValue="#{orden}" />
+               </h:selectOneMenu>
+              </f:facet>
+             </p:cellEditor>
+            </p:column>
+            <p:column headerText="Descripción">
+              <p:cellEditor>
+               <f:facet name="output"> 
+                  <h:outputText value="#{item.descri}" />
+               </f:facet>
+               <f:facet name="input">
+                <p:inputText id="tp1Input" value="#{item.descri}" style="width:100%"/>
+               </f:facet>
+              </p:cellEditor>
+             </p:column>
+             <p:column headerText="Peso" style="width:45px;">
+              <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{item.peso}" /></f:facet>
+               <f:facet name="input">
+                 <h:selectOneMenu value="#{item.peso}" style="width:100%">
+                    <f:selectItems value="#{tabbedView.percent}" var="peso" itemLabel="#{peso}" itemValue="#{peso}" />
+                 </h:selectOneMenu>
+               </f:facet>
+              </p:cellEditor>
+             </p:column>
+             <p:column style="width:32px">
+               <p:rowEditor />
+             </p:column>
+           </p:dataTable>
+           <p:commandButton value="Submit" id="instrumentos" update=":form,:form0"  actionListener="#{tabbedView.updatingItems}" styleClass="ui-priority-primary" action="#{tabbedView.actionInstrumento}"/> 
+  </p:tab>
+  <p:tab title="Diario de Clase">
+    <p:dataTable id="diarioCompleto" var="item"  value="#{tabbedView.diario.listItem}"  style="margin-bottom:7px" rows="10" 
+       paginator="true" 
+       paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+       rowsPerPageTemplate="5,10,15"
+       selectionMode="single" selection="#{item}" rowKey="#{item.fechad}">
+            <f:facet name="header">
+                 Diario de Clase
+            </f:facet>
+          <p:ajax event="rowSelect" listener="#{tabbedView.onRowSelect}" update=":form0:msgs88,:form0:tabV:eventF,:form0:tabV:txt_texto0" />
+          <p:ajax event="rowUnselect" listener="#{tabbedView.onRowUnselect}" update=":form0:msgs88,:form0"/> 
+
+            <p:column headerText="Fecha" style="width:65px;" sortBy="#{item.fecha}">
+               <h:outputText value="#{item.fechad}"/>
+            </p:column>
+
+            <p:column headerText="Texto" style="width:290px;">
+               <h:outputText value="#{item.texto}" styleClass="preformatted" />
+            </p:column>
+          </p:dataTable>
+         <h:panelGrid  columns="2" cellpadding="5"> 
+           <p:outputLabel value="Fecha : *" for="eventF" />
+           <p:calendar id="eventF" value="#{tabbedView.diarioItem.fecha}" pattern="dd/MM/yyyy" required="true">
+              <p:ajax event="dateSelect" listener="#{tabbedView.onDateSelect}" update=":form0:msgs88,eventF"/>
+           </p:calendar>
+           <p:outputLabel value="Texto : *" for="txt_texto0" />
+           <p:inputTextarea id="txt_texto0" rows="6" cols="50" value="#{tabbedView.diarioItem.texto}" required="true"/> 
+          <p:commandButton value="Submit" id="submitE" update=":form0"  actionListener="#{tabbedView.altaDiario}" styleClass="ui-priority-primary" action="#{tabbedView.actionDiario}"/>  
+         </h:panelGrid> 
+  </p:tab>
+</p:tabView>
+           </p:panel> 
+          </h:form>
+          <h:form id="formAdminC0" rendered="#{tabbedView.cuadernoadmin}">
+            <h:outputText value="#{tabbedView.adminprofe}" style="font-weight:bold" />
+          </h:form>
+
+          <h:form id="formAdminC" rendered="#{tabbedView.cuadernoadmin}">
+             <p:accordionPanel id="acc1" value="#{tabbedView.alumCua}" var="alu" activeIndex="">
+               <p:tab id="tabAcc0" title="Alumno - #{alu.alu.nombre}  -  #{alu.pie.media}/#{alu.pie.sobre} - #{alu.pie.percent}%  #{alu.pie.valida}" >
+   <p:dataTable id="eva" var="item" value="#{alu.primera.listItem}"  style="margin-bottom:7px">
+       <f:facet name="header">
+           Items
+       </f:facet>
+ 
+       <p:column headerText="Descripción" style="width:150px;">
+         <h:outputText value="#{tabbedView.itemDescri(item.descri)}" />
+       </p:column>
+ 
+       <p:column headerText="%" style="width:30px;">
+               <h:outputText value="#{item.percent}" />
+       </p:column>
+ 
+       <p:column headerText="Valores">
+          <p:dataTable id="val_tab" var="item_val" value="#{item.valores}" style="margin-bottom:7px">
+            <p:column headerText="Nombre" style="width:170px;" >
+               <h:outputText value="#{item_val.trabajo.title}" />
+            </p:column>
+            <p:column headerText="%" style="width:30px;text-align:right;">
+               <h:outputText value="#{item_val.trabajo.peso}" />
+               <f:facet name="footer">
+                  #{item.sumpeso}
+               </f:facet>
+            </p:column>
+            <p:column headerText="Nota" style="width:45px;text-align:right;">
+               <h:outputText value="#{item_val.notafmt}" />
+               <f:facet name="footer">
+                  #{item.mediafmt}
+               </f:facet>
+            </p:column>
+         </p:dataTable>
+        </p:column>
+ 
+       <p:column headerText="OK?" style="width:25px;">
+               <h:outputText value="#{item.valida}" />
+       </p:column>
+
+       <p:column headerText="Media" style="width:40px;">
+               <!-- <h:outputText value="#{item.mediafmt}" />  -->
+               <h:outputText value="#{item.mediaItemfmt}" /> 
+       </p:column>
+   </p:dataTable>
+               </p:tab>
+             </p:accordionPanel>
+          </h:form>
+          <h:form id="form" rendered="#{tabbedView.cuadernostandard}">
+
+           <!--<p:messages id="msgs" autoUpdate="true" closable="true" showDetail="true" life="1000"/>    -->
+             <p:growl id="msgs9" showDetail="true"  life="4000"/>
+             <p:accordionPanel id="acc" value="#{tabbedView.alumCua}" var="alu" activeIndex="">
+               <p:tab id="tabAcc" title="Alumno - #{alu.alu.nombre}  -  #{alu.pie.media}/#{alu.pie.sobre}  -  #{alu.pie.percent}%  #{alu.pie.valida}">
+   <p:dataTable id="eva" var="item" value="#{alu.primera.listItem}" editable="true"  style="margin-bottom:7px">
+       <f:facet name="header">
+           Editando Items
+       </f:facet>
+ 
+       <p:ajax event="rowEdit" listener="#{tabbedView.onRowEdit}" update=":form:msgs9" />
+       <p:ajax event="rowEditCancel" listener="#{tabbedView.onRowCancel}" update=":form:msgs9" />
+ 
+       <p:column headerText="Descripción" style="width:150px;">
+         <h:outputText value="#{tabbedView.itemDescri(item.descri)}" />
+       </p:column>
+ 
+       <p:column headerText="%" style="width:30px;">
+               <h:outputText value="#{item.percent}" />
+       </p:column>
+ 
+       <p:column headerText="Valores">
+          <p:dataTable id="val_tab" var="item_val" value="#{item.valores}" editable="true" style="margin-bottom:7px">
+           <p:ajax event="rowEdit" listener="#{tabbedView.onRowEdit}" update=":form" />
+           <p:ajax event="rowEditCancel" listener="#{tabbedView.onRowCancel}" update=":form" />
+            <p:column headerText="Nombre" style="width:170px;" >
+               <h:outputText value="#{item_val.trabajo.title}" />
+            </p:column>
+            <p:column headerText="%" style="width:30px;text-align:right;">
+               <h:outputText value="#{item_val.trabajo.peso}" />
+               <f:facet name="footer">
+                  #{item.sumpeso}
+               </f:facet>
+            </p:column>
+            <p:column headerText="Nota" style="width:45px;text-align:right;">
+             <p:cellEditor>
+               <f:facet name="output"><h:outputText value="#{item_val.notafmt}" /></f:facet>
+               <f:facet name="input">
+                 <p:inputText id="tp3Input" value="#{item_val.nota}" converterMessage="Cannot convert to double."  >
+                   <f:validateDoubleRange minimum="0.0" maximum="10.0" />
+                 </p:inputText>
+               </f:facet>
+             </p:cellEditor>
+             <f:facet name="footer">
+                 #{item.mediafmt}
+             </f:facet>
+            </p:column>
+         </p:dataTable>
+        </p:column>
+ 
+       <p:column headerText="OK?" style="width:25px;">
+               <h:outputText value="#{item.valida}" />
+       </p:column>
+
+       <p:column headerText="Media" style="width:40px;">    <!-- <h:outputText value="#{item.mediafmt}" /> -->
+               <h:outputText value="#{item.mediaItemfmt}" /> 
+       </p:column>
+<!--
+       <p:column headerText="Total %" style="width:50px;">
+               <h:outputText value="#{item.media}" />
+       </p:column>
+--> 
+       <p:column style="width:25px">
+           <p:rowEditor />
+       </p:column>
+   </p:dataTable>
+                <p:growl id="growl" life="2000" /> 
+       
+                <p:commandButton value="Submit" id="submit" update=":form" actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.action(alu)}"/> 
+	    
+	        
+               </p:tab>
+             </p:accordionPanel>
+	   </h:form>
+<script type="text/javascript">
+   function logout(xhr, status, args) {
+     setTimeout(function() {
+       window.location = 'login.xhtml';
+     }, 500);
+   } 
+ </script>
+<script type="text/javascript">
+PrimeFaces.locales['es'] = {
+    closeText: 'Cerrar',
+    prevText: 'Anterior',
+    nextText: 'Siguiente',
+    monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+    dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+    dayNamesShort: ['Dom','Lun', 'Mar','Mie', 'Jue', 'Vie','Sáb'],
+    dayNamesMin: ['D','L','M','X','J','V','S'],
+    weekHeader: 'Semana',
+    firstDay: 1,
+    isRTL: false,
+    showMonthAfterYear: false,
+    yearSuffix: '',
+    timeOnlyTitle: 'Sólo hora',
+    timeText: 'Tiempo',
+    hourText: 'Hora',
+    minuteText: 'Minuto',
+    secondText: 'Segundo',
+    currentText: 'Fecha actual',
+    ampm: false,
+    month: 'Mes',
+    week: 'Semana',
+    day: 'Día',
+    allDayText : 'Todo el día'
+};
+</script>
+
+
+	</ui:define>
+</ui:composition>
+

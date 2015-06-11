@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+        xmlns:p="http://primefaces.org/ui"  
+        template="/templates/template.xhtml">
+        
+      <ui:define name="content">
+           <title>Crear y Editar Notas</title>
+<h:form>            
+    <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+<h3>Usuario: #{tabbedView.user.username}</h3>
+<h:panelGrid columns="2" cellpadding="5">
+      <p:outputLabel value="Deseas : *" for="txt_tipo" />
+      <p:selectOneMenu id="txt_tipo" value="#{tabbedView.actionNotas}" style="width:60px" required="true" >
+        <p:ajax event="change" update=":fpreEditor" />
+        <f:selectItem itemLabel="" itemValue="" />
+        <f:selectItems value="#{tabbedView.admNotas}" var="tipo" itemLabel="#{tipo}" itemValue="#{tipo}" />
+      </p:selectOneMenu>
+</h:panelGrid>
+</h:form>
+<h:form id="fpreEditor">
+     <h:panelGrid columns="2" cellpadding="5">
+      <p:selectOneMenu id="txt_tipo" value="#{tabbedView.cargaNota}" style="width:60px" required="true">
+        <p:ajax event="change" update=":feditor" />
+        <f:selectItem itemLabel="" itemValue="" />
+        <f:selectItems value="#{tabbedView.listaNotas}" var="tit" itemLabel="#{tit}" itemValue="#{tit}" />
+      </p:selectOneMenu>
+     </h:panelGrid>
+</h:form>
+<h:form id="feditor">
+       
+      <p:panel header="Escribiendo Notas" styleClass="customTitleBar">
+        <h:panelGrid columns="2" cellpadding="5">
+            <h:outputLabel for="nombrefile" value="Nombre para esta Nota:" />
+            <p:inputText id="nombrefile" value="#{tabbedView.unanota.title}" required="true" label="nombrefile" />
+        </h:panelGrid>
+
+    <p:editor  id="editor" widgetVar="editorWidget" value="#{tabbedView.unanota.texto}" width="600" />
+
+    </p:panel>
+    <h:panelGrid   columns="2" style="margin-top: 10px">
+
+        <p:commandButton  value="Clear" type="button" onclick="PF('editorWidget').clear();" icon="ui-icon-close" />
+    </h:panelGrid>
+<p:commandButton value="Submit" id="submit1" icon="ui-icon-disk"  actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.actionNotas}"/> 
+</h:form>
+</ui:define>
+</ui:composition>
+

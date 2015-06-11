@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+        xmlns:p="http://primefaces.org/ui"  
+        template="/templates/template.xhtml">
+        
+      <ui:define name="content">
+           <title>Sugerencias / Problemas </title>
+<h:form>            
+    <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+<h3>Usuario: #{tabbedView.user.username}</h3>
+<h:panelGrid columns="2" cellpadding="5">
+      <p:outputLabel value="Tipo : *" for="txt_tipo" />
+      <p:selectOneMenu id="txt_tipo" value="#{tabbedView.unafaq.tipo}" style="width:60px" required="true">
+        <f:selectItems value="#{tabbedView.tipoFaq}" var="tipo" itemLabel="#{tipo}" itemValue="#{tipo}" />
+      </p:selectOneMenu>
+      <p:outputLabel value="Texto : *" for="txt_texto"/>
+      <p:inputTextarea id="txt_texto" rows="6" cols="50" value="#{tabbedView.unafaq.descri}" required="true"/>
+</h:panelGrid>
+<p:commandButton value="Submit" id="submit1" update=""  actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.actionFaq}"/> 
+</h:form>
+<h:form id="fhistorico">            
+   <h3>Resumen de tus sugerencias/problemas</h3>
+   <h4><i>autor: #{tabbedView.user.username}</i></h4>
+   <p:outputPanel id="sugerencias1">
+       <p:dataTable value="#{tabbedView.historicoSugerencia}" var="una" id="sugerT1" style="margin-bottom:7px"
+       selectionMode="single" selection="#{una}" rowKey="#{una.clave}">
+          <p:ajax event="rowSelect" listener="#{tabbedView.onRowSelect5}" update=":fhistorico:txt_texto0" />
+          <p:ajax event="rowUnselect" listener="#{tabbedView.onRowUnselect}" update=":fhistorico"/>
+          <p:column headerText="Clave" style="width:60px;">
+           <h:outputText value="#{una.clave}" />
+          </p:column>
+          <p:column headerText="Fecha" style="width:60px;" sortBy="#{una.fecha}">
+           <h:outputText value="#{una.fechad}" />
+          </p:column>
+          <p:column headerText="Tipo" style="width:38px;">
+           <h:outputText value="#{una.tipo}" />
+          </p:column>
+          <p:column headerText="Resp?" style="width:26px;">
+           <h:outputText value="#{tabbedView.respondidaFaq(una)}" />
+          </p:column>
+          <p:column headerText="Texto" style="width:285px;">
+           <h:outputText value="#{una.descri}" escape="false"/>
+          </p:column>
+       </p:dataTable>
+         <h:panelGrid  columns="2" cellpadding="5"> 
+           <p:outputLabel value="Texto : *" for="txt_texto0" />
+           <p:inputTextarea id="txt_texto0" rows="6" cols="50" value="#{tabbedView.nuevoTexto}" required="true"/> 
+         </h:panelGrid> 
+                            
+   </p:outputPanel>
+</h:form>
+</ui:define>
+</ui:composition>
+
