@@ -3,9 +3,6 @@ A notebook of teacher
 
 notesteacher is a Java EE application.
 
-# !NOTE!
-
-
 ## About
 
 
@@ -18,6 +15,8 @@ notesteacher is a Java EE application.
 * A servlet container Apache Tomcat.
 
 ## Usage
+
+This web application is deployed in http://servidor.iespoligonosur.org/notesteacher/login.xhtml and you can access any of the users that you see in WEB-INF/classes/jsfks/UserLoginView.java
 
 ## License
 
