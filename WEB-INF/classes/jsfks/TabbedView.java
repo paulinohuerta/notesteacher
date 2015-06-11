@@ -28,7 +28,7 @@ import org.primefaces.event.UnselectEvent;
 import java.text.SimpleDateFormat;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -39,9 +39,9 @@ import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.event.ColumnResizeEvent;
 import java.util.*;
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.activation.*;
+//import javax.mail.*;
+//import javax.mail.internet.*;
+//import javax.activation.*;
 
 @ManagedBean
 @ViewScoped
