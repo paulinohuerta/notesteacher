@@ -10,8 +10,8 @@
         
       <ui:define name="content">
            <title>Sugerencias / Problemas </title>
-<h:form>            
-    <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+<h:form id="fsurg">            
+    <p:growl id="growl4" showDetail="true" life="3000" />
 <h3>Usuario: #{tabbedView.user.username}</h3>
 <h:panelGrid columns="2" cellpadding="5">
       <p:outputLabel value="Tipo : *" for="txt_tipo" />
@@ -21,7 +21,7 @@
       <p:outputLabel value="Texto : *" for="txt_texto"/>
       <p:inputTextarea id="txt_texto" rows="6" cols="50" value="#{tabbedView.unafaq.descri}" required="true"/>
 </h:panelGrid>
-<p:commandButton value="Submit" id="submit1" update=""  actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.actionFaq}"/> 
+<p:commandButton value="Submit" id="submit1" update=":fsurg,:fhistorico:sugerT1,:fsurg:growl4"  actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.actionFaq}"/> 
 </h:form>
 <h:form id="fhistorico">            
    <h3>Resumen de tus sugerencias/problemas</h3>

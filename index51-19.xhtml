@@ -372,7 +372,7 @@ centerTemplate="month, agendaWeek, agendaDay"  >
            </h:panelGrid>
            </p:dialog>
      </p:tab>
-     <p:tab id="asignaAlumAGrupo" title="Asignar Alumno a Grupo">
+     <p:tab id="asignaAlumAGrupo" title="Asignar Alumnos">
        <h:panelGrid columns="2" cellpadding="10">
 	<h:outputLabel for="asignarField1" value="Los grupos:" />
         <p:selectOneMenu id="asignarField1"  value="#{tabbedView.selectedGr}" style="width:155px">
@@ -389,6 +389,42 @@ centerTemplate="month, agendaWeek, agendaDay"  >
       </h:panelGrid>
       <p:commandButton id="AlumnoAlta" value="Submit" update=":formConsultaG:tv1" action="#{tabbedView.actionAsignarAlumno}"/>
 
+     </p:tab>
+     <p:tab id="elimAlumGrupo" title="Eliminar Alumnos">
+        <h:panelGrid columns="2" cellpadding="10">
+        <h:outputLabel for="asignarField2" value="Los grupos:" />
+         <p:selectOneMenu id="asignarField2"  value="#{tabbedView.selectedGr}" style="width:155px">
+           <p:ajax event="change" update="fpick" listener="#{tabbedView.asignarChanged1}" />
+              <f:selectItem itemLabel="" itemValue="" />
+             <f:selectItems value="#{tabbedView.listadegrupos}" var="item">
+               <f:selectItem itemLabel="#{item}" itemValue="#{item}" />
+             </f:selectItems>
+         </p:selectOneMenu>
+        </h:panelGrid>
+          <h:form id="fpick">
+           <p:pickList id="pickList1" value="#{tabbedView.cargaAlum}" var="cargaAlum" itemLabel="#{cargaAlum}" itemValue="#{cargaAlum}" />
+ 
+           <p:commandButton id="GrupoSubmit1" value="Submit" update="listDeGrupos,Cargados,displayGrupo" oncomplete="PF('grupoDialog').show()" style="margin-top:5px" action="#{tabbedView.actionAlumnosCargados}">
+             <p:confirm header="Confirme" message="Eliminando alumnos?" icon="ui-icon-alert" />
+           </p:commandButton>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+             <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+           <p:dialog modal="true" showEffect="fade" hideEffect="fade" widgetVar="grupoDialog">
+           <h:panelGrid id="displayGrupo" columns="2">
+             <h:outputText value="Source: " style="font-weight:bold" />
+             <ui:repeat value="#{tabbedView.cargaAlum.source}" var="item">
+               <h:outputText value="#{item}" style="margin-right:5px" />
+             </ui:repeat>
+ 
+             <h:outputText value="Target: " style="font-weight:bold" />
+             <ui:repeat value="#{tabbedView.cargaAlum.target}" var="item">
+                <h:outputText value="#{item}" style="margin-right:5px" />
+             </ui:repeat>
+           </h:panelGrid>
+           </p:dialog>
+          </h:form>
      </p:tab>
     </p:tabView>
       </h:form>

@@ -6,11 +6,12 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.Collections;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import redis.clients.jedis.Jedis;
- 
+import redis.clients.jedis.SortingParams; 
 import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -435,7 +436,8 @@ public class AlumnoCuadernoService implements Serializable {
 
         List<String> alumnos;
         alumnos=new ArrayList<String>();
-        alumnos = conn.lrange("cuaderno:grupo:" + gr, 0, -1);
+        //alumnos = conn.lrange("cuaderno:grupo:" + gr, 0, -1);
+   alumnos = conn.sort("cuaderno:grupo:" + gr, new SortingParams().alpha());
 
         List<AlumnoCuaderno> list = new ArrayList<AlumnoCuaderno>();
         if(gr==null) {
@@ -579,6 +581,7 @@ public class AlumnoCuadernoService implements Serializable {
     }
     public void altaGrupo(List<String> alumnos,String gr) {
       conn.sadd("cuaderno:grupos", gr);
+      java.util.Collections.sort(alumnos);
       for(String st : alumnos){
         conn.rpush("cuaderno:grupo:" + gr, st);
       }

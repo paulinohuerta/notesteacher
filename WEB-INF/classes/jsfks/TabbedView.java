@@ -503,7 +503,11 @@ public class TabbedView implements Serializable {
        String fecha=formatter.format(f);
        unafaq.setAuthor(this.user.getUsername());
        service.grabarFaq(this.user.getUsername(),unafaq);
-       return "index51-17";
+       //return "index51-18";
+       unafaq.setDescri("");
+       historicoSugerencia.clear(); // = new ArrayList<Sugerencia>();
+       historicoSugerencia = service.cargarHistSuger(this.user.getUsername());
+       return null;
     }
     public String actionTrabajo(){
        service.createTrabajos(this.user.getUsername(),this.option,trabajos);
@@ -1009,6 +1013,12 @@ public class TabbedView implements Serializable {
 
     public void actionAlumnosCargados() {
         if(!service.existeGrupo(grupoEscogido)) { 
+          service.altaGrupo(cargaAlum.getTarget(),grupoEscogido);
+          listgrup=new ArrayList<Grupo>();
+          listgrup=service.listgrup();
+        }
+        else {
+           //  not empty group
           service.altaGrupo(cargaAlum.getTarget(),grupoEscogido);
           listgrup=new ArrayList<Grupo>();
           listgrup=service.listgrup();

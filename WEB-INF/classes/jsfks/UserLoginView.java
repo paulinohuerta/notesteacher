@@ -182,7 +182,8 @@ public class UserLoginView implements Serializable  {
         back=true;
         return "notas";
       }
-      return null;
+      return "notas";
+      //return null;
     }
     public String actionBackurl1(String backPage) {
       if(!backPage.equals(this.backurl)) {
@@ -190,7 +191,8 @@ public class UserLoginView implements Serializable  {
         back=true;
         return "sugerencias";
       }
-      return null;
+      return "sugerencias";
+      //return null;
     }
     public boolean isBack() {
       return back;
