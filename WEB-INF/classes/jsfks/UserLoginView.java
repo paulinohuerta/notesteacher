@@ -96,7 +96,7 @@ public class UserLoginView implements Serializable  {
    
     public String action() {
        if(this.session) {
-          return "index51-18";
+          return "index51-19";
        } 
        return null;
     }

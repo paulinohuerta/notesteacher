@@ -57,6 +57,7 @@ public class TabbedView implements Serializable {
       private List<String> listAluLoadTarget;
       private List<String> listGrLoadTarget;
       private String stCarga;
+      private DualListModel<String> cargaAlumEli;
       private DualListModel<String> cargaAlum;
       private DualListModel<String> cargaGProfe;
       private String grupoEscogido;
@@ -66,6 +67,7 @@ public class TabbedView implements Serializable {
       private List<Sugerencia> listSugerencia;
       private Sugerencia sugerencia;
       private Sugerencia unafaq;
+      private String selectedGrEli;
       private String selectedGr;
       private String selectedPr;
       private String selectedPr1;
@@ -151,6 +153,7 @@ public class TabbedView implements Serializable {
          listaNotas = new ArrayList<String>();
          grupoAlumno = new ArrayList<String>();
          nuevoTexto="";
+         cargaAlumEli = new DualListModel<String>(listAluLoad, listAluLoadTarget);
      }
      
      public void setInfoservice(InfoService infoservice) {
@@ -251,8 +254,6 @@ public class TabbedView implements Serializable {
         return this.listprofe;
     }
     public List<Grupo> getListgrup() {
-        for(Grupo g : listgrup) {
-	}
         return this.listgrup;
     }
     public String getGrupoEscogido() {
@@ -995,10 +996,16 @@ public class TabbedView implements Serializable {
         return listAluLoad;
     }
         
+    public DualListModel<String> getCargaAlumEli() {
+        return cargaAlumEli;
+    }
     public DualListModel<String> getCargaAlum() {
         return cargaAlum;
     }
  
+    public void setCargaAlumEli(DualListModel<String> cargaAlumEli) {
+        this.cargaAlumEli = cargaAlumEli;
+    }
     public void setCargaAlum(DualListModel<String> cargaAlum) {
         this.cargaAlum = cargaAlum;
     }
@@ -1011,6 +1018,10 @@ public class TabbedView implements Serializable {
         this.cargaGProfe = cargaGProfe;
     }
 
+    public void actionAlumnosEli() {
+       service.actionAlumnosEli(selectedGrEli,cargaAlumEli.getTarget());
+       setSelectedGrEli("");
+    }
     public void actionAlumnosCargados() {
         if(!service.existeGrupo(grupoEscogido)) { 
           service.altaGrupo(cargaAlum.getTarget(),grupoEscogido);
@@ -1070,6 +1081,9 @@ public class TabbedView implements Serializable {
     public String getSelectedPr() {
         return selectedPr;
     }
+    public String getSelectedGrEli() {
+        return selectedGrEli;
+    }
     public String getSelectedGr() {
         return selectedGr;
     }
@@ -1080,7 +1094,25 @@ public class TabbedView implements Serializable {
     public void setSelectedPr(String selectedPr) {
         this.selectedPr = selectedPr;
     }
+
+    public void setSelectedGrEli(String selectedGrEli) {
+        this.selectedGrEli = selectedGrEli;
+        listgrup = new ArrayList<Grupo>();
+        listgrup=service.listgrup();
+        grupoAlumno.clear();
+        listAluLoad.clear();
+        listAluLoadTarget.clear();
+        if(selectedGrEli.length()>=1) {
+          grupoAlumno=service.grupoAlumno(selectedGrEli);
+          for(String st : grupoAlumno){
+             listAluLoad.add(st);
+          }
+        }
+        cargaAlumEli = new DualListModel<String>(listAluLoad, listAluLoadTarget);
+    }
+
     public void setSelectedGr(String selectedGr) {
+        grupoAlumno.clear();
         grupoAlumno=service.grupoAlumno(selectedGr);
         this.selectedGr = selectedGr;
     }

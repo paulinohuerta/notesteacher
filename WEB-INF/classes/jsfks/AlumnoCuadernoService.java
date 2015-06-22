@@ -662,4 +662,15 @@ public class AlumnoCuadernoService implements Serializable {
       }
       return null;
     }
+    public void actionAlumnosEli(String gr,List<String> list) {
+      if(list!=null) {
+           // baja de la BD
+         for(String st : list) {
+            long cuantos=conn.lrem("cuaderno:grupo:" + gr,1,st);
+         }
+      }
+      else {
+         System.out.println("No entra en if -- lista vacia\n");
+      } 
+    }
 }
