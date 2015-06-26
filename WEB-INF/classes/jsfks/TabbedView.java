@@ -90,6 +90,7 @@ public class TabbedView implements Serializable {
      private ItemDiario diarioItem;
      private ItemDiario diarioItemEdit;
      private String grupoValidoAgenda="--no grupo válido--";
+     private boolean Eli=false;
      private boolean editandoItemDiario=false;
      private boolean cuadernostandard=true;
      private boolean admin=false; 
@@ -743,6 +744,15 @@ public class TabbedView implements Serializable {
         cerrando=false;
         agregando=false;
     } 
+    public void onTabChange1(TabChangeEvent event) {
+        String st=event.getTab().getTitle();
+        if(st.contains("Alta Grupo")) {
+          Eli=false;
+        }
+        if(st.contains("Eliminar Alumnos")) {
+          Eli=true;
+        }
+    }
     public void onTabChange(TabChangeEvent event) {
       /*
         FacesMessage msg = new FacesMessage("Tab Changed", "Active Tab: " + event.getTab().getTitle());
@@ -1096,6 +1106,7 @@ public class TabbedView implements Serializable {
     }
 
     public void setSelectedGrEli(String selectedGrEli) {
+       if(Eli) {
         this.selectedGrEli = selectedGrEli;
         listgrup = new ArrayList<Grupo>();
         listgrup=service.listgrup();
@@ -1109,12 +1120,13 @@ public class TabbedView implements Serializable {
           }
         }
         cargaAlumEli = new DualListModel<String>(listAluLoad, listAluLoadTarget);
+       }
     }
 
     public void setSelectedGr(String selectedGr) {
+        this.selectedGr = selectedGr;
         grupoAlumno.clear();
         grupoAlumno=service.grupoAlumno(selectedGr);
-        this.selectedGr = selectedGr;
     }
     public void seleccionadoAction(ActionEvent actionEvent) {
         addMessage("Welcome to Primefaces!!");

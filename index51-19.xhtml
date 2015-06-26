@@ -270,6 +270,7 @@ centerTemplate="month, agendaWeek, agendaDay"  >
           </h:form>
         <h:form id="formConsultaG" rendered="#{tabbedView.consultaG}">
         <p:tabView id="tv1">
+         <p:ajax event="tabChange" listener="#{tabbedView.onTabChange1}" update="tv1"/>
          <p:tab id="aGrupo" title="Alta Grupo">
           <h:panelGrid columns="2" cellpadding="10">
            <p:dataList  id="listDeGrupos" value="#{tabbedView.listgrup}" var="item" type="unordered" itemType="none"

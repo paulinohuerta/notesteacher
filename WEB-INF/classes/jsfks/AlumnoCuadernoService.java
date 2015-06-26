@@ -82,7 +82,7 @@ public class AlumnoCuadernoService implements Serializable {
      
     public AlumnoCuadernoService() {
         conn = new Jedis("localhost");
-        conn.select(11);
+        conn.select(10);
         int i;
         items=new ArrayList<ItemInstrumento>();
         for(i=0; i < generalDescri.length; i++) {

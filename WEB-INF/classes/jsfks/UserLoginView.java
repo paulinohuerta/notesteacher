@@ -135,7 +135,7 @@ public class UserLoginView implements Serializable  {
             this.session = true;
             message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenid@", username);
             conn = new Jedis("localhost");
-            conn.select(11);
+            conn.select(10);
           
             //
             ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
