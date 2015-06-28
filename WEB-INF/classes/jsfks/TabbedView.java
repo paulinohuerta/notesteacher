@@ -541,6 +541,7 @@ public class TabbedView implements Serializable {
              }
           }
           alc.obtenerPie();
+          service.grabarObservaciones(this.user.getUsername(),this.option,this.eval,alc.getAlu().getNombre(), alc.getObservaciones());
     }
    
     public void displaySelectedSingle() {

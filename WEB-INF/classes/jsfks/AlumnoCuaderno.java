@@ -9,6 +9,7 @@ public class AlumnoCuaderno implements Serializable {
 	private Alumno alu;
         private List<Eva> listEva;
         private ItemPie pie;
+        private String observaciones="";
 
         public AlumnoCuaderno() {
 	  this.alu = new Alumno();
@@ -74,6 +75,10 @@ public class AlumnoCuaderno implements Serializable {
           }
         }
 
+	public void setObservaciones(String observaciones) {
+           this.observaciones=observaciones;
+        }
+
 	public void setPie(ItemPie pie) {
            this.pie=pie;
         }
@@ -84,6 +89,10 @@ public class AlumnoCuaderno implements Serializable {
 
 	public ItemPie getPie() {
           return this.pie;
+        }
+
+	public String getObservaciones() {
+	   return this.observaciones;
         }
 
 	public Alumno getAlu() {

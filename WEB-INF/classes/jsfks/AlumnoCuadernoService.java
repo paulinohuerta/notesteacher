@@ -501,6 +501,10 @@ public class AlumnoCuadernoService implements Serializable {
         return list;
     }
 
+    public void grabarObservaciones(String profe,String gr,String eval,String nombre_alu, observ) {
+      conn.set("cuaderno:profe:" + profe + ":" + gr + ":" + gettingEval(eval) + ":" + nombre_alu, observ);
+    }
+    
     public void editandoTable(String profe,String gr,String descri,String eval,String nombre_alu, List<Valor> lv) {
         for(Valor valor : lv) {
              //cuaderno:profe:antonio:SMR2:aaaaaa:0:Enrique:
