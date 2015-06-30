@@ -17,12 +17,13 @@ public class AlumnoCuaderno implements Serializable {
 	  this.pie = new ItemPie();
         }
 
-        public AlumnoCuaderno(String nombre, List<Eva> listEva) {
+        public AlumnoCuaderno(String nombre, List<Eva> listEva, String observaciones) {
 	  alu=new Alumno(nombre);
 	  this.listEva = new ArrayList<Eva>();
           this.listEva=listEva;
 	  this.pie = new ItemPie();
           obtenerPie();
+          this.observaciones=observaciones;
         }
 
         public void obtenerPie() {

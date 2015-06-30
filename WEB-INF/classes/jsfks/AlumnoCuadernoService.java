@@ -428,7 +428,6 @@ public class AlumnoCuadernoService implements Serializable {
            conn.hset("cuaderno:profe:" + profe + ":" + gr + ":items",itv.getCodigo(),Integer.toString(itv.getPeso()));
         }
     }
-
     public List<AlumnoCuaderno> createAluGru(String profe,String gr,String ev) {
            
         updateTrabajos=new ArrayList<Trabajo>();
@@ -495,13 +494,14 @@ public class AlumnoCuadernoService implements Serializable {
            }
            List<Eva> listEva = new ArrayList<Eva>();
            listEva.add(new Eva(lIEva));
+           String observaciones=conn.get("cuaderno:profe:" + profe + ":" + gr + ":" + gettingEval(ev) + ":" + alumnos.get(i) ); 
           
-           list.add(new AlumnoCuaderno(alumnos.get(i),listEva));
+           list.add(new AlumnoCuaderno(alumnos.get(i),listEva,observaciones));
         }
         return list;
     }
 
-    public void grabarObservaciones(String profe,String gr,String eval,String nombre_alu, observ) {
+    public void grabarObservaciones(String profe,String gr,String eval,String nombre_alu, String observ) {
       conn.set("cuaderno:profe:" + profe + ":" + gr + ":" + gettingEval(eval) + ":" + nombre_alu, observ);
     }
     

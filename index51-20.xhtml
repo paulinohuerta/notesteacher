@@ -684,6 +684,9 @@ centerTemplate="month, agendaWeek, agendaDay"  >
                <h:outputText value="#{item.mediaItemfmt}" /> 
        </p:column>
    </p:dataTable>
+    <p:outputLabel for="observ" value="Observaciones:  " style="font-weight: 800;" />
+    <h:outputText id="observ" value="#{alu.observaciones}" size="60" style="font-weight: bold;"/>
+
                </p:tab>
              </p:accordionPanel>
           </h:form>
@@ -754,14 +757,12 @@ centerTemplate="month, agendaWeek, agendaDay"  >
            <p:rowEditor />
        </p:column>
    </p:dataTable>
-   <h:outputLabel for="observ" value="Observaciones:" />
-   <p:inputText id="observ" value="#{tabbedView.alu.observaciones}" />
-
-                <p:growl id="growl" life="2000" /> 
-       
-                <p:commandButton value="Submit" id="submit" update=":form" actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.action(alu)}"/> 
-	    
-	        
+   <p:growl id="growl" life="2000" /> 
+   <h:panelGrid  columns="3" cellpadding="5">
+    <p:outputLabel for="observ" value="Observaciones:" size="19" style="font-weight: 800;text-align: left"/>
+    <p:inputText id="observ" value="#{alu.observaciones}" style="font-weight: bold;" size="60" />
+    <p:commandButton value="Submit" id="submit" update=":form" actionListener="#{buttonView.buttonAction}" styleClass="ui-priority-primary" action="#{tabbedView.action(alu)}" /> 
+   </h:panelGrid>
                </p:tab>
              </p:accordionPanel>
 	   </h:form>
